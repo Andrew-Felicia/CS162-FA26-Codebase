@@ -46,9 +46,32 @@ WordCount *word_counts = NULL;
  */
 int num_words(FILE* infile) {
   int num_words = 0;
+  
+  if (infile == NULL) {
+    printf("the file is empty");
+  } else {
+      int counts = 0;
 
+      while (!feof(infile)) {
+        char c = fgetc(infile);
+
+        if (isalpha(c)) {
+          counts += 1;
+        } else {
+          if (counts > 1 && counts <= MAX_WORD_LEN) {
+            num_words += 1;
+            counts = 0;
+          }  
+
+        }
+
+      }
+
+    }
   return num_words;
+
 }
+
 
 /*
  * 3.1.2 Word Frequency Count
@@ -140,6 +163,12 @@ int main (int argc, char *argv[]) {
   }
 
   if (count_mode) {
+    for (size_t i = 1; i < argc; i++ ) {
+      char *filename = argv[i];
+      infile = fopen(filename, "r");
+      total_words += num_words(infile);
+      fclose(infile);
+    }
     printf("The total number of words is: %i\n", total_words);
   } else {
     wordcount_sort(&word_counts, wordcount_less);
